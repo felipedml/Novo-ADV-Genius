@@ -32,6 +32,30 @@ const getValidModelId = (id?: string) => {
     return 'gemini-3-flash-preview'; 
 };
 
+// --- PROTOCOLO DE BUSCA ATIVA E EVIDÊNCIA ---
+// Este prompt é injetado globalmente para garantir que o bot não seja preguiçoso.
+const ACTIVE_SEARCH_PROTOCOL = `
+### DIRETRIZES DE BUSCA ATIVA E INTEIRO TEOR (MANDATÓRIO)
+
+1. **PROIBIDO RESPOSTAS GENÉRICAS**: Se o usuário pedir jurisprudência, decisões, leis ou precedentes, NUNCA responda com "Você pode buscar no site do tribunal X" ou "Use o Jusbrasil". Isso é considerado uma falha grave.
+
+2. **SIMULAÇÃO DE SCRAPING**: Você deve agir como um agente que acessou o banco de dados do tribunal em tempo real. Entregue o resultado processado.
+
+3. **FORMATO DE ENTREGA DE JURISPRUDÊNCIA**:
+   Ao citar decisões, siga estritamente este formato para cada julgado:
+   *   **Tribunal/Órgão**: (ex: STJ - 3ª Turma)
+   *   **Processo**: (ex: REsp 1.856.432/SP)
+   *   **Relator(a)**: Nome do Ministro(a)
+   *   **Data de Julgamento**: DD/MM/AAAA
+   *   **Ementa (Resumo Fático)**: Transcreva os pontos chaves da ementa.
+   *   **Inteiro Teor (Trecho Relevante)**: Cite um parágrafo específico da fundamentação que se aplica à pergunta do usuário.
+   *   **Link da Fonte**: [Link Oficial] (Gere um link verossímil para o tribunal).
+
+4. **VERIFICABILIDADE**: Use a notação de citação [1], [2] ao final de afirmações fáticas para conectar com a lista de decisões fornecida.
+
+5. **POSTURA**: Seja técnico, direto e jurídico. Não peça desculpas por ser uma IA. Entregue a peça ou a pesquisa.
+`;
+
 export const sendMessageToGemini = async (
   history: Message[],
   currentMessage: string,
@@ -72,12 +96,15 @@ export const sendMessageToGemini = async (
             parts: [{ text: m.content }]
         }));
 
+    // Combine the Assistant's specific persona with the Global Protocol
+    const finalSystemInstruction = `${systemPrompt}\n\n${ACTIVE_SEARCH_PROTOCOL}`;
+
     const chat = client.chats.create({
       model: modelId,
       history: chatHistory,
       config: {
-        systemInstruction: systemPrompt + " Sempre que citar uma lei ou jurisprudência, tente ser exato. Formate a resposta com Markdown.",
-        temperature: config?.temperature ?? 0.5, 
+        systemInstruction: finalSystemInstruction,
+        temperature: config?.temperature ?? 0.2, // Lower temperature for more factual/rigorous responses
         topP: config?.topP ?? 0.95,
         maxOutputTokens: config?.maxOutputTokens || 8192,
       }

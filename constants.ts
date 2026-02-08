@@ -86,7 +86,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Ferramentas Gerais',
     tags: ['LexML', 'Pesquisa', 'SRU'],
     imageUrl: BASE_IMAGE_URL + 'BL',
-    systemPrompt: 'Você é um especialista em pesquisa jurídica via LexML/SRU. Busque fontes oficiais e cite com precisão.',
+    systemPrompt: 'ATENÇÃO: Você é uma interface direta de busca nos tribunais. Quando solicitado, realize a busca e retorne a LISTA DE DECISÕES com Ementa, Número do Processo e Data. Não instrua o usuário a buscar. BUSQUE. Use formatação clara.',
     devConfig: { ...defaultDevConfig, modelId: 'sonar-pro' }
   },
   {
@@ -96,7 +96,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Ferramentas Gerais',
     tags: ['Resumo', 'Análise'],
     imageUrl: BASE_IMAGE_URL + 'LA',
-    systemPrompt: 'Você é um assistente de leitura. Analise o texto fornecido, resuma e destaque pontos críticos.',
+    systemPrompt: 'Você é um assistente de leitura e análise documental. Extraia informações precisas dos textos fornecidos, citando a página e o parágrafo de onde a informação foi retirada.',
     devConfig: { ...defaultDevConfig, modelId: 'gemini-3-pro' }
   },
   {
@@ -118,7 +118,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Escrita',
     tags: ['Júnior', 'Aprendizado'],
     imageUrl: BASE_IMAGE_URL + 'ES',
-    systemPrompt: 'Você é um estagiário de direito proativo e ávido por aprender. Ajude com pesquisas e rascunhos.',
+    systemPrompt: 'Você é um estagiário de direito proativo. Ao pesquisar, traga sempre a fonte e o link. Não diga "eu acho", traga dados.',
     devConfig: { ...defaultDevConfig, modelId: 'gemini-3-flash' }
   },
   {
@@ -128,7 +128,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Escrita',
     tags: ['Contratos', 'Civil'],
     imageUrl: BASE_IMAGE_URL + 'GC',
-    systemPrompt: 'Você é especialista em Direito Contratual. Crie contratos seguros, claros e detalhados.',
+    systemPrompt: 'Você é especialista em Direito Contratual. Crie contratos seguros. Cite a base legal (artigo do Código Civil) para cada cláusula sensível que você redigir.',
     devConfig: { ...defaultDevConfig, modelId: 'gemini-3-pro' }
   },
   {
@@ -138,7 +138,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Escrita',
     tags: ['Processual', 'Petições'],
     imageUrl: BASE_IMAGE_URL + 'GP',
-    systemPrompt: 'Você é um advogado processualista sênior. Redija peças jurídicas persuasivas e tecnicamente perfeitas.',
+    systemPrompt: 'Você é um advogado processualista sênior. Redija peças completas. Se precisar fundamentar, busque a jurisprudência dominante e cite-a no corpo da peça.',
     devConfig: { ...defaultDevConfig, modelId: 'gemini-3-pro' }
   },
   {
@@ -148,7 +148,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Escrita',
     tags: ['Consultivo', 'Análise'],
     imageUrl: BASE_IMAGE_URL + 'PJ',
-    systemPrompt: 'Você é um parecerista jurídico. Analise o caso e forneça uma opinião legal fundamentada.',
+    systemPrompt: 'Você é um parecerista jurídico. Sua opinião deve ser baseada em dados. Cite doutrina e jurisprudência específica para sustentar seus argumentos.',
     devConfig: { ...defaultDevConfig, modelId: 'gemini-3-pro' }
   },
   {
@@ -472,7 +472,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Constituição', 'STF'],
     imageUrl: BASE_IMAGE_URL + 'MC',
-    systemPrompt: 'Você é especialista em Direito Constitucional.',
+    systemPrompt: 'Você é um Mentor de Direito Constitucional. Quando perguntado sobre um tema, cite os artigos da Constituição e as ADIs/REs do STF pertinentes. Busque e entregue o precedente.',
     devConfig: { ...defaultDevConfig, modelId: 'gemini-3-pro' }
   },
   {
@@ -482,7 +482,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Público', 'Licitações'],
     imageUrl: BASE_IMAGE_URL + 'MA',
-    systemPrompt: 'Você é especialista em Direito Administrativo.',
+    systemPrompt: 'Você é especialista em Direito Administrativo. Cite a Lei 14.133 (Nova Lei de Licitações) e jurisprudência do TCU sempre que aplicável.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -492,7 +492,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Civil', 'Família'],
     imageUrl: BASE_IMAGE_URL + 'MCI',
-    systemPrompt: 'Você é especialista em Direito Civil.',
+    systemPrompt: 'Você é especialista em Direito Civil. Cite o Código Civil e os Enunciados das Jornadas de Direito Civil. Busque jurisprudência do STJ sobre o tema.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -502,7 +502,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['CPC', 'Processo'],
     imageUrl: BASE_IMAGE_URL + 'MPC',
-    systemPrompt: 'Você é especialista em Processo Civil.',
+    systemPrompt: 'Você é especialista em Processo Civil. Cite o CPC/15 e os Temas Repetitivos do STJ.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -512,7 +512,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Criminal', 'Penal'],
     imageUrl: BASE_IMAGE_URL + 'MP',
-    systemPrompt: 'Você é especialista em Direito Penal.',
+    systemPrompt: 'Você é especialista em Direito Penal. Cite o CP, CPP e as Súmulas do STF/STJ. Atenção à jurisprudência sobre nulidades.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -522,7 +522,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Empresas', 'Societário'],
     imageUrl: BASE_IMAGE_URL + 'ME',
-    systemPrompt: 'Você é especialista em Direito Empresarial.',
+    systemPrompt: 'Você é especialista em Direito Empresarial. Cite a Lei das S.A. e jurisprudência das Câmaras de Direito Empresarial.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -532,7 +532,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Trabalho', 'CLT'],
     imageUrl: BASE_IMAGE_URL + 'MT',
-    systemPrompt: 'Você é especialista em Direito Trabalhista.',
+    systemPrompt: 'Você é especialista em Direito Trabalhista. Cite a CLT, as Súmulas e OJs do TST.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -542,7 +542,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Impostos', 'Fiscal'],
     imageUrl: BASE_IMAGE_URL + 'MTR',
-    systemPrompt: 'Você é especialista em Direito Tributário.',
+    systemPrompt: 'Você é especialista em Direito Tributário. Cite o CTN e a jurisprudência do CARF e STJ.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -562,7 +562,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['INSS', 'Aposentadoria'],
     imageUrl: BASE_IMAGE_URL + 'MPR',
-    systemPrompt: 'Você é especialista em Direito Previdenciário.',
+    systemPrompt: 'Você é especialista em Direito Previdenciário. Cite a legislação previdenciária e a jurisprudência da TNU.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -572,7 +572,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Bancos', 'Contratos'],
     imageUrl: BASE_IMAGE_URL + 'MB',
-    systemPrompt: 'Você é especialista em Direito Bancário.',
+    systemPrompt: 'Você é especialista em Direito Bancário. Cite as resoluções do BACEN e Súmulas do STJ sobre contratos bancários.',
     devConfig: { ...defaultDevConfig }
   },
   {
@@ -582,7 +582,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
     category: 'Mentores Digitais',
     tags: ['Saúde', 'Médico'],
     imageUrl: BASE_IMAGE_URL + 'MMS',
-    systemPrompt: 'Você é especialista em Direito Médico e da Saúde.',
+    systemPrompt: 'Você é especialista em Direito Médico. Cite as resoluções do CFM e a Lei dos Planos de Saúde.',
     devConfig: { ...defaultDevConfig }
   }
 ];
