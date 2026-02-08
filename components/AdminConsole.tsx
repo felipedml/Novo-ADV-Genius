@@ -10,38 +10,65 @@ const AdminConsole: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   
   // Interaction States
-  const [isInviting, setIsInviting] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteName, setInviteName] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formEmail, setFormEmail] = useState('');
+  const [formName, setFormName] = useState('');
+  const [formRole, setFormRole] = useState<UserRole>(UserRole.USER);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  const handleInviteUser = (e: React.FormEvent) => {
+  const openInviteModal = () => {
+      setIsEditing(false);
+      setFormName('');
+      setFormEmail('');
+      setFormRole(UserRole.USER);
+      setCurrentUserId(null);
+      setIsModalOpen(true);
+  };
+
+  const openEditModal = (user: User) => {
+      setIsEditing(true);
+      setFormName(user.name);
+      setFormEmail(user.email);
+      setFormRole(user.role);
+      setCurrentUserId(user.id);
+      setIsModalOpen(true);
+  };
+
+  const handleUserSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      const newUser: User = {
-          id: Date.now().toString(),
-          name: inviteName,
-          email: inviteEmail,
-          role: UserRole.USER,
-          workspaceId: 'w1',
-          organizationName: 'ADV Genius HQ',
-          status: 'invited'
-      };
-      setUsers([...users, newUser]);
       
-      // Log Action
-      setAuditLogs(prev => [{
-          id: Date.now().toString(),
-          actorName: 'Dev Master',
-          actorEmail: 'dev@advgenius.com.br',
-          action: 'INVITE_USER',
-          details: `Invited ${inviteEmail}`,
-          timestamp: new Date(),
-          ipAddress: '127.0.0.1'
-      }, ...prev]);
-
-      setIsInviting(false);
-      setInviteEmail('');
-      setInviteName('');
-      alert(`Convite enviado para ${inviteEmail}`);
+      if (isEditing && currentUserId) {
+          // Edit Logic
+          setUsers(users.map(u => u.id === currentUserId ? { ...u, name: formName, email: formEmail, role: formRole } : u));
+          alert(`Usuário ${formName} atualizado com sucesso.`);
+      } else {
+          // Invite Logic
+          const newUser: User = {
+            id: Date.now().toString(),
+            name: formName,
+            email: formEmail,
+            role: formRole,
+            workspaceId: 'w1',
+            organizationName: 'ADV Genius HQ',
+            status: 'invited'
+          };
+          setUsers([...users, newUser]);
+          
+          // Log Action
+          setAuditLogs(prev => [{
+            id: Date.now().toString(),
+            actorName: 'Dev Master',
+            actorEmail: 'dev@advgenius.com.br',
+            action: 'INVITE_USER',
+            details: `Invited ${formEmail} as ${formRole}`,
+            timestamp: new Date(),
+            ipAddress: '127.0.0.1'
+        }, ...prev]);
+          alert(`Convite enviado para ${formEmail}`);
+      }
+      
+      setIsModalOpen(false);
   };
 
   const handleRevokeUser = (userId: string) => {
@@ -77,16 +104,32 @@ const AdminConsole: React.FC = () => {
   // --- USERS TAB ---
   const renderUsersTab = () => (
       <div className="animate-in fade-in relative">
-          {isInviting && (
+          {isModalOpen && (
               <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
                   <div className="bg-adv-gray border border-white/10 rounded-xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95">
-                      <h3 className="text-lg font-bold text-white mb-4">Convidar Membro</h3>
-                      <form onSubmit={handleInviteUser} className="space-y-4">
-                          <input required type="text" placeholder="Nome Completo" value={inviteName} onChange={e => setInviteName(e.target.value)} className="w-full bg-black border border-white/10 rounded p-2 text-white outline-none focus:border-adv-gold"/>
-                          <input required type="email" placeholder="E-mail Corporativo" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} className="w-full bg-black border border-white/10 rounded p-2 text-white outline-none focus:border-adv-gold"/>
+                      <h3 className="text-lg font-bold text-white mb-4">{isEditing ? 'Editar Usuário' : 'Convidar Membro'}</h3>
+                      <form onSubmit={handleUserSubmit} className="space-y-4">
+                          <div>
+                              <label className="text-xs text-gray-400 font-bold uppercase">Nome</label>
+                              <input required type="text" value={formName} onChange={e => setFormName(e.target.value)} className="w-full bg-black border border-white/10 rounded p-2 text-white outline-none focus:border-adv-gold"/>
+                          </div>
+                          <div>
+                              <label className="text-xs text-gray-400 font-bold uppercase">Email</label>
+                              <input required type="email" value={formEmail} onChange={e => setFormEmail(e.target.value)} className="w-full bg-black border border-white/10 rounded p-2 text-white outline-none focus:border-adv-gold"/>
+                          </div>
+                          <div>
+                              <label className="text-xs text-gray-400 font-bold uppercase">Permissão</label>
+                              <select value={formRole} onChange={e => setFormRole(e.target.value as UserRole)} className="w-full bg-black border border-white/10 rounded p-2 text-white outline-none focus:border-adv-gold">
+                                  <option value={UserRole.USER}>User</option>
+                                  <option value={UserRole.ADMIN}>Admin</option>
+                                  <option value={UserRole.MANAGER}>Manager</option>
+                                  <option value={UserRole.VIEWER}>Viewer</option>
+                                  <option value={UserRole.BILLING}>Billing</option>
+                              </select>
+                          </div>
                           <div className="flex gap-2 pt-2">
-                              <button type="button" onClick={() => setIsInviting(false)} className="flex-1 py-2 text-gray-400 hover:text-white">Cancelar</button>
-                              <button type="submit" className="flex-1 py-2 bg-adv-gold text-black font-bold rounded hover:bg-adv-goldDim">Enviar</button>
+                              <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-2 text-gray-400 hover:text-white">Cancelar</button>
+                              <button type="submit" className="flex-1 py-2 bg-adv-gold text-black font-bold rounded hover:bg-adv-goldDim">{isEditing ? 'Salvar' : 'Enviar'}</button>
                           </div>
                       </form>
                   </div>
@@ -104,7 +147,7 @@ const AdminConsole: React.FC = () => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
               </div>
-              <button onClick={() => setIsInviting(true)} className="bg-adv-gold text-black px-4 py-2 rounded-lg text-sm font-bold hover:bg-adv-goldDim transition-colors flex items-center gap-2">
+              <button onClick={openInviteModal} className="bg-adv-gold text-black px-4 py-2 rounded-lg text-sm font-bold hover:bg-adv-goldDim transition-colors flex items-center gap-2">
                   <UserPlus className="w-4 h-4" /> Convidar Usuário
               </button>
           </div>
@@ -154,7 +197,7 @@ const AdminConsole: React.FC = () => {
                               <td className="p-4 text-right">
                                   {user.status !== 'disabled' && (
                                       <>
-                                        <button className="text-gray-500 hover:text-white mr-3">Editar</button>
+                                        <button onClick={() => openEditModal(user)} className="text-gray-500 hover:text-white mr-3">Editar</button>
                                         <button onClick={() => handleRevokeUser(user.id)} className="text-red-500 hover:text-red-400">Revogar</button>
                                       </>
                                   )}

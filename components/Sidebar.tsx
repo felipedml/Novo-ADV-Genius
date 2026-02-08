@@ -31,6 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, onChangeVie
 
   const isAdmin = [UserRole.OWNER, UserRole.ADMIN, UserRole.DEVELOPER].includes(currentUser.role);
   const isDev = currentUser.role === UserRole.DEVELOPER || currentUser.role === UserRole.OWNER;
+  const isOwner = currentUser.role === UserRole.OWNER;
 
   return (
     <aside className="w-64 bg-black border-r border-white/10 flex flex-col h-full sticky top-0 z-20">
@@ -66,7 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, onChangeVie
             onClick={() => onChangeView(ViewState.SETTINGS)}
             className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
               currentView === ViewState.SETTINGS 
-                ? 'bg-adv-petrol/20 text-adv-gold' 
+                ? 'bg-adv-petrol/20 text-adv-gold border border-adv-gold/20' 
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
           >
@@ -79,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, onChangeVie
                 onClick={() => onChangeView(ViewState.ADMIN)}
                 className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   currentView === ViewState.ADMIN 
-                    ? 'bg-adv-petrol/20 text-adv-gold' 
+                    ? 'bg-adv-petrol/20 text-adv-gold border border-adv-gold/20' 
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -102,8 +103,15 @@ const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, onChangeVie
               </button>
           )}
 
-           {currentUser.role === UserRole.OWNER && (
-             <button className="w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-gray-400 hover:text-white hover:bg-white/5">
+           {isOwner && (
+             <button 
+                onClick={() => onChangeView(ViewState.BILLING)}
+                className={`w-full flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    currentView === ViewState.BILLING
+                      ? 'bg-adv-petrol/20 text-adv-gold border border-adv-gold/20' 
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+             >
                 <CreditCard className="w-5 h-5 mr-3 text-gray-500" />
                 Billing & Faturas
               </button>

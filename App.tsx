@@ -7,6 +7,7 @@ import Trainings from './components/Trainings';
 import DeveloperStudio from './components/DeveloperStudio';
 import Projects from './components/Projects';
 import AdminConsole from './components/AdminConsole';
+import Billing from './components/Billing';
 import { MOCK_USER, MOCK_ASSISTANTS, ASSISTANT_CATEGORIES } from './constants';
 import { ViewState, Assistant } from './types';
 import { Search, Plus, Sparkles, AlertCircle, Bot } from 'lucide-react';
@@ -101,6 +102,10 @@ function App() {
 
     if (currentView === ViewState.ADMIN) {
         return <AdminConsole />;
+    }
+
+    if (currentView === ViewState.BILLING) {
+        return <Billing />;
     }
 
     if (currentView === ViewState.DASHBOARD) {

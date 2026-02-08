@@ -186,5 +186,6 @@ export enum ViewState {
   TRAININGS = 'TRAININGS',
   SETTINGS = 'SETTINGS', // Mapped to PROJECTS in Sidebar
   ADMIN = 'ADMIN',
-  DEV_STUDIO = 'DEV_STUDIO'
+  DEV_STUDIO = 'DEV_STUDIO',
+  BILLING = 'BILLING'
 }

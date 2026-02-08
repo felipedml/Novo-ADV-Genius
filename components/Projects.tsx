@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Folder, Search, Plus, Filter, Clock, MoreVertical, FileText, MessageSquare, Briefcase, ChevronRight, Download, Trash2, X, Save } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Folder, Search, Plus, Filter, Clock, MoreVertical, FileText, MessageSquare, Briefcase, ChevronRight, Download, Trash2, X, Save, UploadCloud, ChevronDown, ChevronUp } from 'lucide-react';
 import { MOCK_PROJECTS } from '../constants';
 import { Project, ProjectDocument } from '../types';
 
@@ -14,6 +14,12 @@ const Projects: React.FC = () => {
     const [newProjectName, setNewProjectName] = useState('');
     const [newClientName, setNewClientName] = useState('');
     const [newCaseNumber, setNewCaseNumber] = useState('');
+
+    // Document State
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [expandedDocs, setExpandedDocs] = useState(false);
+    // Local state to simulate added documents before backend persist
+    const [localDocs, setLocalDocs] = useState<Record<string, ProjectDocument[]>>({}); 
 
     const filteredProjects = projects.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -52,12 +58,53 @@ const Projects: React.FC = () => {
         }
     };
 
+    // --- File Upload Simulation ---
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0] && selectedProject) {
+            const file = e.target.files[0];
+            const newDoc: ProjectDocument = {
+                id: Date.now().toString(),
+                name: file.name,
+                type: file.name.split('.').pop()?.toUpperCase() as any || 'FILE',
+                size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+                uploadDate: new Date()
+            };
+
+            setLocalDocs(prev => ({
+                ...prev,
+                [selectedProject.id]: [newDoc, ...(prev[selectedProject.id] || [])]
+            }));
+
+            // Update project count
+            setProjects(prev => prev.map(p => p.id === selectedProject.id ? { ...p, documentsCount: p.documentsCount + 1 } : p));
+            alert(`Arquivo "${file.name}" adicionado com sucesso ao projeto.`);
+        }
+    };
+    
+    const handleDownload = (docName: string) => {
+        const confirm = window.confirm(`Deseja baixar ${docName}?`);
+        if(confirm) {
+            // Simulate network delay
+            setTimeout(() => {
+                alert("Download concluído.");
+            }, 800);
+        }
+    };
+
     // --- Mock Documents for Detail View ---
-    const getMockDocs = (projId: string): ProjectDocument[] => [
-        { id: 'd1', name: 'Procuração.pdf', type: 'PDF', size: '1.2 MB', uploadDate: new Date() },
-        { id: 'd2', name: 'Documentos_Pessoais.pdf', type: 'PDF', size: '3.5 MB', uploadDate: new Date() },
-        { id: 'd3', name: 'Inicial_Rascunho.docx', type: 'DOCX', size: '45 KB', uploadDate: new Date() }
-    ];
+    const getProjectDocs = (projId: string): ProjectDocument[] => {
+        const staticDocs: ProjectDocument[] = [
+            { id: 'd1', name: 'Procuração.pdf', type: 'PDF', size: '1.2 MB', uploadDate: new Date() },
+            { id: 'd2', name: 'Documentos_Pessoais.pdf', type: 'PDF', size: '3.5 MB', uploadDate: new Date() },
+            { id: 'd3', name: 'Inicial_Rascunho.docx', type: 'DOCX', size: '45 KB', uploadDate: new Date() }
+        ];
+        const addedDocs = localDocs[projId] || [];
+        return [...addedDocs, ...staticDocs];
+    };
 
     return (
         <div className="flex h-full bg-adv-gray overflow-hidden">
@@ -207,7 +254,7 @@ const Projects: React.FC = () => {
                                         <div className="space-y-3">
                                             <div className="flex justify-between items-center text-sm">
                                                 <span className="text-gray-500">Documentos</span>
-                                                <span className="text-white font-mono">{selectedProject.documentsCount}</span>
+                                                <span className="text-white font-mono">{getProjectDocs(selectedProject.id).length}</span>
                                             </div>
                                             <div className="flex justify-between items-center text-sm">
                                                 <span className="text-gray-500">Conversas</span>
@@ -233,41 +280,67 @@ const Projects: React.FC = () => {
                                             <h4 className="text-sm font-bold text-white flex items-center gap-2">
                                                 <FileText className="w-4 h-4 text-adv-gold" /> Documentos do Caso
                                             </h4>
-                                            <button 
-                                                onClick={() => alert("Simulação: Abrindo janela de upload...")}
-                                                className="text-xs text-adv-gold hover:text-white"
-                                            >
-                                                + Upload
-                                            </button>
-                                        </div>
-                                        <div>
-                                            {getMockDocs(selectedProject.id).map((doc) => (
-                                                <div key={doc.id} className="p-4 border-b border-white/5 flex items-center justify-between hover:bg-white/5 transition-colors group">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className={`p-2 rounded ${doc.type === 'PDF' ? 'bg-red-900/30 text-red-400' : 'bg-blue-900/30 text-blue-400'}`}>
-                                                            <FileText className="w-4 h-4" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm text-white font-medium">{doc.name}</p>
-                                                            <p className="text-[10px] text-gray-500">{doc.size} • {doc.uploadDate.toLocaleDateString()}</p>
-                                                        </div>
-                                                    </div>
-                                                    <button 
-                                                        onClick={() => alert(`Simulação: Iniciando download de ${doc.name}`)}
-                                                        className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-white"
-                                                    >
-                                                        <Download className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            <div className="p-4 text-center">
+                                            <div>
+                                                <input 
+                                                    type="file" 
+                                                    ref={fileInputRef} 
+                                                    className="hidden" 
+                                                    onChange={handleFileChange} 
+                                                />
                                                 <button 
-                                                    onClick={() => alert("Simulação: Carregando mais documentos...")}
-                                                    className="text-xs text-gray-500 hover:text-white"
+                                                    onClick={handleUploadClick}
+                                                    className="text-xs text-adv-gold hover:text-white flex items-center gap-1 border border-adv-gold/30 px-2 py-1 rounded hover:bg-adv-gold/10"
                                                 >
-                                                    Ver todos os arquivos
+                                                    <UploadCloud className="w-3 h-3" /> Upload
                                                 </button>
                                             </div>
+                                        </div>
+                                        <div>
+                                            {(() => {
+                                                const allDocs = getProjectDocs(selectedProject.id);
+                                                const displayedDocs = expandedDocs ? allDocs : allDocs.slice(0, 3);
+                                                return displayedDocs.map((doc) => (
+                                                    <div key={doc.id} className="p-4 border-b border-white/5 flex items-center justify-between hover:bg-white/5 transition-colors group animate-in slide-in-from-right-2">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`p-2 rounded ${doc.type === 'PDF' ? 'bg-red-900/30 text-red-400' : doc.type === 'DOCX' ? 'bg-blue-900/30 text-blue-400' : 'bg-green-900/30 text-green-400'}`}>
+                                                                <FileText className="w-4 h-4" />
+                                                            </div>
+                                                            <div>
+                                                                <p className="text-sm text-white font-medium">{doc.name}</p>
+                                                                <p className="text-[10px] text-gray-500">{doc.size} • {doc.uploadDate.toLocaleDateString()}</p>
+                                                            </div>
+                                                        </div>
+                                                        <button 
+                                                            onClick={() => handleDownload(doc.name)}
+                                                            className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-white"
+                                                            title="Download"
+                                                        >
+                                                            <Download className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                ));
+                                            })()}
+                                            
+                                            {getProjectDocs(selectedProject.id).length > 3 && (
+                                                <div className="p-4 text-center">
+                                                    <button 
+                                                        onClick={() => setExpandedDocs(!expandedDocs)}
+                                                        className="text-xs text-gray-500 hover:text-white flex items-center justify-center gap-1 w-full"
+                                                    >
+                                                        {expandedDocs ? (
+                                                            <><ChevronUp className="w-3 h-3"/> Mostrar menos</>
+                                                        ) : (
+                                                            <><ChevronDown className="w-3 h-3"/> Ver todos os arquivos ({getProjectDocs(selectedProject.id).length})</>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            )}
+                                            
+                                            {getProjectDocs(selectedProject.id).length === 0 && (
+                                                <div className="p-8 text-center text-gray-500 text-xs">
+                                                    Nenhum documento adicionado ainda.
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
