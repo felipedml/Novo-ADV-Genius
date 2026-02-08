@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { Users, Shield, Activity, Settings, Search, Download, Trash2, Check, X, ShieldAlert, Key, UserPlus } from 'lucide-react';
+import { Users, Shield, Activity, Settings, Search, Download, Trash2, Check, X, ShieldAlert, Key, UserPlus, RefreshCw } from 'lucide-react';
 import { MOCK_USERS_LIST, MOCK_AUDIT_LOGS } from '../constants';
 import { UserRole, User } from '../types';
 
-const AdminConsole: React.FC = () => {
+interface AdminConsoleProps {
+    onResetSystem?: () => void;
+}
+
+const AdminConsole: React.FC<AdminConsoleProps> = ({ onResetSystem }) => {
   const [activeTab, setActiveTab] = useState<'users' | 'audit' | 'settings'>('users');
   const [users, setUsers] = useState<User[]>(MOCK_USERS_LIST);
   const [auditLogs, setAuditLogs] = useState(MOCK_AUDIT_LOGS);
@@ -312,14 +316,26 @@ const AdminConsole: React.FC = () => {
 
           {/* Danger Zone */}
           <section className="space-y-4 pt-4">
-             <div className="bg-red-950/20 border border-red-900/50 rounded-xl p-6 flex items-center justify-between">
-                 <div>
-                     <p className="font-bold text-red-400">Encerrar Workspace</p>
-                     <p className="text-xs text-red-900/70">Esta ação é irreversível e excluirá todos os dados.</p>
+             <div className="bg-red-950/20 border border-red-900/50 rounded-xl p-6 space-y-4">
+                 <div className="flex items-center justify-between">
+                    <div>
+                        <p className="font-bold text-red-400">Restaurar Padrões de Fábrica</p>
+                        <p className="text-xs text-red-900/70">Apaga todas as edições feitas no Dev Studio e assistentes criados.</p>
+                    </div>
+                    <button onClick={onResetSystem} className="bg-red-900/20 text-red-500 border border-red-900 hover:bg-red-900 hover:text-white px-4 py-2 rounded font-bold text-xs transition-colors flex items-center gap-2">
+                        <RefreshCw className="w-3 h-3" /> Resetar Sistema
+                    </button>
                  </div>
-                 <button onClick={() => alert("Ação bloqueada: Contate o suporte para exclusão de conta Owner.")} className="bg-red-900/20 text-red-500 border border-red-900 hover:bg-red-900 hover:text-white px-4 py-2 rounded font-bold text-xs transition-colors">
-                     Excluir Conta
-                 </button>
+
+                 <div className="flex items-center justify-between pt-4 border-t border-red-900/30">
+                     <div>
+                         <p className="font-bold text-red-400">Encerrar Workspace</p>
+                         <p className="text-xs text-red-900/70">Esta ação é irreversível e excluirá todos os dados.</p>
+                     </div>
+                     <button onClick={() => alert("Ação bloqueada: Contate o suporte para exclusão de conta Owner.")} className="bg-red-900/20 text-red-500 border border-red-900 hover:bg-red-900 hover:text-white px-4 py-2 rounded font-bold text-xs transition-colors">
+                         Excluir Conta
+                     </button>
+                 </div>
              </div>
           </section>
       </div>

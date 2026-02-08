@@ -8,6 +8,7 @@ import DeveloperStudio from './components/DeveloperStudio';
 import Projects from './components/Projects';
 import AdminConsole from './components/AdminConsole';
 import Billing from './components/Billing';
+import SupportWidget from './components/SupportWidget';
 import { MOCK_USER, MOCK_ASSISTANTS, ASSISTANT_CATEGORIES } from './constants';
 import { ViewState, Assistant } from './types';
 import { Search, Plus, Sparkles, AlertCircle, Bot } from 'lucide-react';
@@ -21,8 +22,23 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [hasApiKey, setHasApiKey] = useState(false);
   
-  // State for assistants to allow updates from Dev Studio and MyAssistants
-  const [assistants, setAssistants] = useState<Assistant[]>(MOCK_ASSISTANTS);
+  // Initialize assistants from LocalStorage to persist Dev Studio changes
+  const [assistants, setAssistants] = useState<Assistant[]>(() => {
+    try {
+      const saved = localStorage.getItem('adv_genius_assistants');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn("Falha ao carregar assistentes do cache local", e);
+    }
+    return MOCK_ASSISTANTS;
+  });
+
+  // Persist assistants changes (Dev Studio edits, New Assistants, etc)
+  useEffect(() => {
+    localStorage.setItem('adv_genius_assistants', JSON.stringify(assistants));
+  }, [assistants]);
 
   useEffect(() => {
     // Check for API KEY
@@ -70,6 +86,15 @@ function App() {
       setAssistants(prev => prev.filter(a => a.id !== id));
   };
 
+  // Callback to reset to factory defaults (passed to AdminConsole if needed, or used internally)
+  const handleFactoryReset = () => {
+      if(confirm("Isso apagará todas as configurações personalizadas e assistentes criados. Deseja continuar?")) {
+          localStorage.removeItem('adv_genius_assistants');
+          setAssistants(MOCK_ASSISTANTS);
+          alert("Sistema restaurado para os padrões de fábrica.");
+      }
+  };
+
   const renderContent = () => {
     if (currentView === ViewState.CHAT && selectedAssistant) {
       return <ChatInterface assistant={selectedAssistant} onBack={handleBackToDashboard} />;
@@ -101,7 +126,7 @@ function App() {
     }
 
     if (currentView === ViewState.ADMIN) {
-        return <AdminConsole />;
+        return <AdminConsole onResetSystem={handleFactoryReset} />;
     }
 
     if (currentView === ViewState.BILLING) {
@@ -238,6 +263,8 @@ function App() {
       <main className="flex-1 h-full overflow-hidden relative bg-gradient-to-br from-black to-adv-gray">
         {renderContent()}
       </main>
+
+      <SupportWidget />
     </div>
   );
 }
