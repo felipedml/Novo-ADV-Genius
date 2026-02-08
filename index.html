@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ADV Genius | Hub Jurídico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              adv: {
+                black: '#000000',
+                gold: '#D9AA43',
+                goldLight: '#EAC56F',
+                goldDim: '#9C8B50',
+                petrol: '#395761',
+                petrolDark: '#1F2E33',
+                gray: '#1A1A1A',
+                grayLight: '#2A2A2A',
+                light: '#E5E5E5'
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            backgroundImage: {
+              'gradient-ribbon': 'linear-gradient(45deg, #395761 0%, #425A63 25%, #626E5F 50%, #9C8B50 75%, #D9AA43 100%)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #000000;
+        color: #E5E5E5;
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000000;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #D9AA43;
+      }
+      .ribbon-gradient {
+        background: linear-gradient(to right, #395761, #425A63, #626E5F, #9C8B50, #D9AA43);
+      }
+      /* Markdown Styles */
+      .markdown-body p { margin-bottom: 0.75rem; }
+      .markdown-body ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+      .markdown-body ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+      .markdown-body h1, .markdown-body h2, .markdown-body h3 { color: #fff; font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; }
+      .markdown-body h1 { font-size: 1.5rem; }
+      .markdown-body h2 { font-size: 1.25rem; }
+      .markdown-body h3 { font-size: 1.1rem; color: #D9AA43; }
+      .markdown-body blockquote { border-left: 3px solid #D9AA43; padding-left: 1rem; font-style: italic; color: #aaa; margin-bottom: 1rem; background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 0 4px 4px 0; }
+      .markdown-body strong { color: #D9AA43; font-weight: 600; }
+      .markdown-body a { color: #60a5fa; text-decoration: underline; }
+      .markdown-body code { background: rgba(255,255,255,0.1); padding: 0.1rem 0.3rem; rounded: 0.2rem; font-family: monospace; font-size: 0.9em; }
+      .markdown-body pre { background: #111; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; margin-bottom: 1rem; border: 1px solid #333; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "react-markdown": "https://esm.sh/react-markdown@9.0.1?bundle",
+    "remark-gfm": "https://esm.sh/remark-gfm@4.0.0?bundle"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
