@@ -46,7 +46,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <h1 className="text-4xl font-bold text-white tracking-tight">ADV Genius</h1>
           <div className="h-1 w-20 bg-gradient-to-r from-adv-petrol to-adv-gold mt-4 rounded-full"></div>
           <p className="text-gray-400 mt-4 text-center font-light">
-            Hub de Inteligência Jurídica com <span className="text-adv-gold font-medium">Inteiro Teor</span> e Evidência.
+            <span className="text-adv-gold font-medium">Inteligência Jurídica</span>
           </p>
         </div>
 

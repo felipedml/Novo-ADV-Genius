@@ -82,7 +82,7 @@ export const MOCK_ASSISTANTS: Assistant[] = [
   {
     id: 'fg-02',
     name: 'Buscador de Leis e Jurisprudência',
-    description: 'Conectado ao SRU LexML para buscar inteiro teor de leis, doutrinas e decisões.',
+    description: 'Conectado ao SRU LexML para buscar conteúdo completo de leis, doutrinas e decisões.',
     category: 'Ferramentas Gerais',
     tags: ['LexML', 'Pesquisa', 'SRU'],
     imageUrl: BASE_IMAGE_URL + 'BL',

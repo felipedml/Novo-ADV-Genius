@@ -8,7 +8,7 @@ import {
 // Mock Data for Plans
 const PLANS = [
     { id: 'starter', name: 'ADV Starter', price: 'R$ 97', features: ['1 Usuário', '50k Tokens/mês', 'Sem OCR'] },
-    { id: 'pro', name: 'ADV Genius Pro', price: 'R$ 297', features: ['5 Usuários', '1M Tokens/mês', 'OCR Ilimitado', 'Inteiro Teor'] },
+    { id: 'pro', name: 'ADV Genius Pro', price: 'R$ 297', features: ['5 Usuários', '1M Tokens/mês', 'OCR Ilimitado', 'Análise Documental'] },
     { id: 'enterprise', name: 'ADV Enterprise', price: 'Sob Consulta', features: ['Usuários Ilimitados', 'API Dedicada', 'SSO', 'Gerente de Conta'] },
 ];
 
@@ -280,7 +280,7 @@ const Billing: React.FC = () => {
                             </div>
                             <div>
                                 <div className="flex justify-between text-xs mb-1.5">
-                                    <span className="text-white font-medium">Inteiro Teor (Docs)</span>
+                                    <span className="text-white font-medium">Documentos (Docs)</span>
                                     <span className="text-gray-400">12 / 100</span>
                                 </div>
                                 <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">

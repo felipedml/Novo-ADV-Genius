@@ -40,7 +40,7 @@ const CitationPanel: React.FC<CitationPanelProps> = ({ citation, onClose }) => {
             onClick={() => setActiveTab('context')}
             className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider transition-colors ${activeTab === 'context' ? 'text-adv-gold border-b-2 border-adv-gold bg-white/5' : 'text-gray-500 hover:text-white'}`}
           >
-              Inteiro Teor
+              Contexto
           </button>
       </div>
 

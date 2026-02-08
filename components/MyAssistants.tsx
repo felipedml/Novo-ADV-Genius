@@ -123,7 +123,7 @@ const MyAssistants: React.FC<MyAssistantsProps> = ({ assistants, onSaveAssistant
                          <label className="block text-sm font-medium text-gray-300 mb-2">Base de Conhecimento (RAG)</label>
                          <div className="border-2 border-dashed border-white/10 rounded-lg p-8 text-center hover:border-adv-gold/50 transition-colors cursor-pointer bg-black/20">
                             <p className="text-gray-400 text-sm">Arraste PDFs, DOCX ou TXT aqui</p>
-                            <p className="text-xs text-gray-600 mt-1">Otimizado para "Inteiro Teor"</p>
+                            <p className="text-xs text-gray-600 mt-1">Otimizado para análise contextual</p>
                          </div>
                     </div>
 

@@ -44,7 +44,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ assistant, onBack }) => {
       setMessages([{
         id: 'init',
         role: 'model',
-        content: `### Olá, sou o **${assistant.name}**. \n\n${assistant.description}\n\n*   Posso analisar documentos com OCR\n*   Busco legislações em inteiro teor\n\nComo posso ajudar hoje?`,
+        content: `### Olá, sou o **${assistant.name}**. \n\n${assistant.description}\n\n*   Posso analisar documentos com OCR\n*   Pesquiso legislações e doutrina\n\nComo posso ajudar hoje?`,
         timestamp: new Date()
       }]);
     }
@@ -333,7 +333,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ assistant, onBack }) => {
                         type="button" 
                         onClick={handleFileUpload}
                         className="p-2 text-gray-400 hover:text-adv-gold transition-colors tooltip"
-                        title="Upload PDF/DOCX (Inteiro Teor)"
+                        title="Upload PDF/DOCX"
                     >
                         <Paperclip className="w-5 h-5" />
                     </button>
@@ -369,7 +369,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ assistant, onBack }) => {
                 </button>
             </form>
             <p className="text-center text-[10px] text-gray-600 mt-2">
-                As citações são auditáveis com hash de integridade e snapshot do inteiro teor.
+                As citações são auditáveis com hash de integridade e snapshot da fonte.
             </p>
         </div>
       </div>
