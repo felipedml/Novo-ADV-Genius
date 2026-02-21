@@ -10,12 +10,13 @@ import AdminConsole from './components/AdminConsole';
 import Billing from './components/Billing';
 import SupportWidget from './components/SupportWidget';
 import { MOCK_USER, MOCK_ASSISTANTS, ASSISTANT_CATEGORIES } from './constants';
-import { ViewState, Assistant } from './types';
+import { ViewState, Assistant, User, UserRole } from './types';
 import { Search, Plus, Sparkles, AlertCircle, Bot } from 'lucide-react';
 import { initializeGemini } from './services/geminiService';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+function AppContent() {
+  const { user, loading, signInWithGoogle, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<ViewState>(ViewState.DASHBOARD);
   const [selectedAssistant, setSelectedAssistant] = useState<Assistant | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +43,7 @@ function App() {
 
   useEffect(() => {
     // Check for API KEY
-    const key = process.env.API_KEY;
+    const key = import.meta.env.VITE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
     if(key) {
         initializeGemini(key);
         setHasApiKey(true);
@@ -50,11 +51,11 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    setIsAuthenticated(true);
+    signInWithGoogle();
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    signOut();
     setCurrentView(ViewState.DASHBOARD);
     setSelectedAssistant(null);
   };
@@ -207,18 +208,20 @@ function App() {
                   
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-black">
-                        <img src={assistant.imageUrl} alt={assistant.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                        {assistant.imageUrl ? (
+                            <img src={assistant.imageUrl} alt={assistant.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                        ) : (
+                            <Bot className="w-6 h-6 text-adv-gold m-3" />
+                        )}
                     </div>
-                    {['Mentores', 'Gerais'].includes(assistant.category) && (
-                        <div className="bg-adv-petrol/20 text-adv-gold p-1.5 rounded-full" title="Assistente Premium">
-                            <Sparkles className="w-3 h-3" />
-                        </div>
-                    )}
-                    {assistant.isCustom && (
-                        <div className="bg-white/10 text-white p-1.5 rounded-full" title="Assistente Próprio">
-                            <Bot className="w-3 h-3" />
-                        </div>
-                    )}
+                    <div className="flex gap-1">
+                        {assistant.isNew && (
+                            <span className="bg-green-500/20 text-green-400 text-[10px] px-2 py-0.5 rounded-full font-medium border border-green-500/30">NOVO</span>
+                        )}
+                        {assistant.isCustom && (
+                            <span className="bg-purple-500/20 text-purple-400 text-[10px] px-2 py-0.5 rounded-full font-medium border border-purple-500/30">CUSTOM</span>
+                        )}
+                    </div>
                   </div>
                   
                   <h3 className="text-lg font-bold text-white mb-1 group-hover:text-adv-gold transition-colors">{assistant.name}</h3>
@@ -247,20 +250,39 @@ function App() {
     return null;
   };
 
-  if (!isAuthenticated) {
+  if (loading) {
+      return <div className="h-screen w-screen bg-black flex items-center justify-center text-adv-gold">Carregando...</div>;
+  }
+
+  if (!user) {
     return <Login onLogin={handleLogin} />;
   }
+
+  // Map Supabase user to App User
+  const appUser: User = {
+      id: user.id,
+      name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuário',
+      email: user.email || '',
+      role: UserRole.OWNER, // Default role
+      workspaceId: 'w1',
+      organizationName: 'Minha Organização',
+      status: 'active'
+  };
 
   return (
     <div className="flex h-screen bg-black text-white font-sans selection:bg-adv-gold selection:text-black">
       <Sidebar 
-        currentUser={MOCK_USER} 
+        currentUser={appUser} 
         currentView={currentView}
         onChangeView={setCurrentView}
         onLogout={handleLogout}
       />
 
       <main className="flex-1 h-full overflow-hidden relative bg-gradient-to-br from-black to-adv-gray">
+        {/* Background Elements */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-adv-gold/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-adv-petrol/10 rounded-full blur-[120px] pointer-events-none" />
+        
         {renderContent()}
       </main>
 
@@ -269,4 +291,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}

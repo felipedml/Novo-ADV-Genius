@@ -10,6 +10,8 @@ import { MOCK_EVIDENCE } from '../constants';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+import UploadAttachment from './UploadAttachment';
+
 interface ChatInterfaceProps {
   assistant: Assistant;
   onBack: () => void;
@@ -27,6 +29,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ assistant, onBack }) => {
   const [showKnowledgePanel, setShowKnowledgePanel] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [showUrlInput, setShowUrlInput] = useState(false);
+  const [showUpload, setShowUpload] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -313,26 +316,58 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ assistant, onBack }) => {
         {/* Input Area */}
         <div className="p-4 border-t border-white/10 bg-black/80">
             {showUrlInput && (
-                <form onSubmit={handleAddUrl} className="mb-3 flex gap-2 animate-in slide-in-from-bottom">
-                    <input 
-                        type="url" 
-                        placeholder="Cole a URL do documento (ex: planalto.gov.br/...)" 
-                        className="flex-1 bg-black border border-white/10 rounded-lg p-2 text-xs text-white focus:border-adv-gold outline-none"
-                        value={urlInput}
-                        onChange={(e) => setUrlInput(e.target.value)}
-                        autoFocus
+                <div className="mb-3 animate-in slide-in-from-bottom">
+                    <form onSubmit={handleAddUrl} className="flex gap-2">
+                        <input 
+                            type="url" 
+                            placeholder="Cole a URL do documento (ex: planalto.gov.br/...)" 
+                            className="flex-1 bg-black border border-white/10 rounded-lg p-2 text-xs text-white focus:border-adv-gold outline-none"
+                            value={urlInput}
+                            onChange={(e) => setUrlInput(e.target.value)}
+                            autoFocus
+                        />
+                        <button type="submit" className="bg-adv-petrol text-white px-3 py-1 rounded-lg text-xs font-bold">Ingerir</button>
+                        <button type="button" onClick={() => setShowUrlInput(false)} className="text-gray-500 hover:text-white"><X className="w-4 h-4"/></button>
+                    </form>
+                </div>
+            )}
+
+            {showUpload && (
+                <div className="mb-3 animate-in slide-in-from-bottom relative">
+                    <button 
+                        onClick={() => setShowUpload(false)} 
+                        className="absolute -top-2 -right-2 bg-black rounded-full p-1 text-gray-400 hover:text-white border border-white/10 z-10"
+                    >
+                        <X className="w-3 h-3"/>
+                    </button>
+                    <UploadAttachment 
+                        onUploadComplete={(url, path) => {
+                            const newDoc: KnowledgeDocument = {
+                                id: Date.now().toString(),
+                                title: path.split('/').pop() || 'Documento',
+                                type: 'pdf',
+                                url: url,
+                                status: 'ready', // Assume ready after upload for now
+                                progress: 100,
+                                ocrApplied: false,
+                                addedAt: new Date()
+                            };
+                            setDocuments(prev => [...prev, newDoc]);
+                            setShowKnowledgePanel(true);
+                            setShowUpload(false);
+                            // Simulate ingestion processing
+                            simulateIngestion(newDoc.id, 'pdf');
+                        }}
                     />
-                    <button type="submit" className="bg-adv-petrol text-white px-3 py-1 rounded-lg text-xs font-bold">Ingerir</button>
-                    <button type="button" onClick={() => setShowUrlInput(false)} className="text-gray-500 hover:text-white"><X className="w-4 h-4"/></button>
-                </form>
+                </div>
             )}
 
             <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto relative flex items-center gap-3">
                 <div className="flex items-center gap-1">
                     <button 
                         type="button" 
-                        onClick={handleFileUpload}
-                        className="p-2 text-gray-400 hover:text-adv-gold transition-colors tooltip"
+                        onClick={() => setShowUpload(!showUpload)}
+                        className={`p-2 transition-colors tooltip ${showUpload ? 'text-adv-gold' : 'text-gray-400 hover:text-adv-gold'}`}
                         title="Upload PDF/DOCX"
                     >
                         <Paperclip className="w-5 h-5" />

@@ -250,7 +250,11 @@ const Trainings: React.FC = () => {
             <div className="p-4">
               <div className="flex justify-between items-start mb-1">
                  <span className="text-[10px] font-bold text-adv-gold uppercase tracking-wider bg-adv-petrol/20 px-1.5 py-0.5 rounded">{training.category}</span>
-                 {training.videoUrl && <LinkIcon className="w-3 h-3 text-gray-500" title="Possui Link Externo" />}
+                 {training.videoUrl && (
+                    <span title="Possui Link Externo">
+                        <LinkIcon className="w-3 h-3 text-gray-500" />
+                    </span>
+                 )}
               </div>
               <h3 className="text-lg font-bold text-white mt-1 mb-2 leading-tight line-clamp-2">{training.title}</h3>
               <p className="text-sm text-gray-400 line-clamp-2">{training.description}</p>

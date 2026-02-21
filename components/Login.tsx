@@ -51,8 +51,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
 
         <div className="bg-adv-gray border border-white/10 p-8 rounded-2xl backdrop-blur-sm shadow-2xl">
-          {step === 'email' ? (
-            <form onSubmit={handleSendCode} className="space-y-6">
+          <div className="space-y-6">
+            <button
+              onClick={onLogin}
+              disabled={loading}
+              className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-3 shadow-lg"
+            >
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
+              Entrar com Google
+            </button>
+
+            <div className="relative flex py-2 items-center">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink-0 mx-4 text-gray-500 text-xs uppercase">Ou continue com e-mail</span>
+                <div className="flex-grow border-t border-white/10"></div>
+            </div>
+
+            {step === 'email' ? (
+            <form onSubmit={handleSendCode} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-adv-gold uppercase tracking-wider mb-2">E-mail Corporativo</label>
                 <div className="relative group">
@@ -70,9 +86,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-adv-gold hover:bg-adv-goldDim text-adv-black font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-adv-gold/20"
+                className="w-full bg-adv-petrol/20 hover:bg-adv-petrol/30 text-adv-gold border border-adv-gold/20 font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2"
               >
-                {loading ? 'Verificando...' : 'Acessar Plataforma'}
+                {loading ? 'Enviando...' : 'Entrar com Magic Link'}
                 {!loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </form>
@@ -113,6 +129,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               </button>
             </form>
           )}
+          </div>
         </div>
         
         <div className="mt-8 flex justify-center gap-4 text-[10px] text-gray-600 uppercase tracking-widest">
